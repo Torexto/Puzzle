@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:helpers="clr-namespace:Puzzle.Helpers"
+             x:Class="Puzzle.MainPage">
+
+  <ScrollView>
+    <VerticalStackLayout>
+      <Button Clicked="PickImage" Text="Pick Image" />
+      <CollectionView x:Name="ImageContainer" ItemsSource="{Binding Pieces}">
+        <CollectionView.ItemTemplate>
+          <DataTemplate>
+            <Border StrokeThickness="0">
+              <Border.GestureRecognizers>
+                <DropGestureRecognizer
+                  Drop="OnDrop"/>
+              </Border.GestureRecognizers>
+              <Image Source="{Binding Image}"
+                     x:DataType="helpers:PuzzlePiece"
+                     WidthRequest="100">
+                <Image.GestureRecognizers>
+                  <DragGestureRecognizer CanDrag="True"
+                                         DragStarting="OnDrag" />
+                </Image.GestureRecognizers>
+              </Image>
+            </Border>
+          </DataTemplate>
+        </CollectionView.ItemTemplate>
+      </CollectionView>
+    </VerticalStackLayout>
+  </ScrollView>
+
+</ContentPage>
