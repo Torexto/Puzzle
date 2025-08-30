@@ -9,6 +9,9 @@
     <VerticalStackLayout>
       <Button Clicked="PickImage" Text="Pick Image" />
       <CollectionView x:Name="ImageContainer" ItemsSource="{Binding Pieces}">
+        <CollectionView.ItemsLayout>
+          <GridItemsLayout Orientation="Horizontal" />
+        </CollectionView.ItemsLayout>
         <CollectionView.ItemTemplate>
           <DataTemplate>
             <Border StrokeThickness="0">
@@ -18,7 +21,7 @@
               </Border.GestureRecognizers>
               <Image Source="{Binding Image}"
                      x:DataType="helpers:PuzzlePiece"
-                     WidthRequest="100">
+                     HeightRequest="50">
                 <Image.GestureRecognizers>
                   <DragGestureRecognizer CanDrag="True"
                                          DragStarting="OnDrag" />

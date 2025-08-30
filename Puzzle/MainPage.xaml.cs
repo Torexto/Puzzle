@@ -9,12 +9,17 @@ public partial class MainPage
 {
   public ObservableCollection<PuzzlePiece> Pieces { get; set; } = [];
   private int? Index { get; set; }
-  private const int Subdivide = 5;
+  private const int Subdivide = 10;
 
   public MainPage()
   {
     InitializeComponent();
     BindingContext = this;
+
+    if (ImageContainer.ItemsLayout is GridItemsLayout gridLayout)
+    {
+      gridLayout.Span = Subdivide;
+    }
   }
 
   private async void PickImage(object? sender, EventArgs e)
@@ -30,8 +35,6 @@ public partial class MainPage
 
       var puzzleSize = new Size(imageSize.Width / Subdivide, imageSize.Height / Subdivide);
 
-      ImageContainer.ItemsLayout = new GridItemsLayout(Subdivide, ItemsLayoutOrientation.Horizontal);
-
       var result = GeneratePuzzlePieces(image, puzzleSize, Subdivide);
 
       Random.Shared.Shuffle(result);
@@ -44,9 +47,9 @@ public partial class MainPage
       Pieces = new ObservableCollection<PuzzlePiece>(result);
       OnPropertyChanged(nameof(Pieces));
     }
-    catch (Exception err)
+    catch (Exception)
     {
-      Console.WriteLine(err.Message);
+      //
     }
   }
 
@@ -60,12 +63,8 @@ public partial class MainPage
       var col = i % subdivide;
       var row = i / subdivide;
 
-      pieces[i] = new PuzzlePiece
-      {
-        OriginalIndex = i,
-        CurrentIndex = i,
-        Image = Crop(image, row * size.Width, col * size.Height, size.Width, size.Height)
-      };
+      var crop = Crop(image, row * size.Width, col * size.Height, size.Width, size.Height);
+      pieces[i] = new PuzzlePiece(i, crop);
     }
 
     return pieces;
@@ -109,12 +108,9 @@ public partial class MainPage
       (draggedPiece.CurrentIndex, targetPiece.CurrentIndex) =
         (targetPiece.CurrentIndex, draggedPiece.CurrentIndex);
 
-      var ordered = Pieces.OrderBy(p => p.CurrentIndex).ToList();
-      Pieces.Clear();
-      foreach (var p in ordered)
-        Pieces.Add(p);
+      Pieces[draggedPiece.CurrentIndex] = draggedPiece;
+      Pieces[targetPiece.CurrentIndex] = targetPiece;
 
-      // check solved state
       if (Pieces.All(p => p.CurrentIndex == p.OriginalIndex))
       {
         await DisplayAlert("🎉", "Puzzle solved!", "OK");

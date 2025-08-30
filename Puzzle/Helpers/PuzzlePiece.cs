@@ -1,8 +1,28 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
 namespace Puzzle.Helpers;
 
-public class PuzzlePiece
+public class PuzzlePiece(int index, ImageSource image) : INotifyPropertyChanged
+
 {
-  public required int OriginalIndex { get; init; }
-  public required int CurrentIndex { get; set; }
-  public required ImageSource Image { get; set; }
+  private int _currentIndex = index;
+  public ImageSource Image { get; } = image;
+  public int OriginalIndex { get; } = index;
+
+  public int CurrentIndex
+  {
+    get => _currentIndex;
+    set
+    {
+      if (_currentIndex == value) return;
+      _currentIndex = value;
+      OnPropertyChanged();
+    }
+  }
+
+  public event PropertyChangedEventHandler? PropertyChanged;
+
+  protected void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
+    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
