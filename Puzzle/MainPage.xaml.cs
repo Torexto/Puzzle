@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Microsoft.Maui.Graphics.Platform;
 using Puzzle.Helpers;
 using SkiaSharp;
 using Size = Puzzle.Helpers.Size;
@@ -7,7 +8,7 @@ namespace Puzzle;
 
 public partial class MainPage
 {
-  public ObservableCollection<PuzzlePiece> Pieces { get; set; } = [];
+  public ObservableCollection<PuzzleDrawable> Pieces { get; set; } = [];
   private int? Index { get; set; }
   private const int Subdivide = 10;
 
@@ -30,21 +31,20 @@ public partial class MainPage
       var stream = await ImagePicker.PickImageAsync(options);
       if (stream is null) return;
 
-      var image = stream.ToArray();
       var imageSize = await ImagePicker.GetImageSizeAsync(stream);
 
       var puzzleSize = new Size(imageSize.Width / Subdivide, imageSize.Height / Subdivide);
 
-      var result = GeneratePuzzlePieces(image, puzzleSize, Subdivide);
+      var result = GeneratePuzzlePieces(stream, puzzleSize, Subdivide);
 
       Random.Shared.Shuffle(result);
 
       for (var i = 0; i < result.Length; i++)
       {
-        result[i].CurrentIndex = i;
+        result[i].Piece.CurrentIndex = i;
       }
 
-      Pieces = new ObservableCollection<PuzzlePiece>(result);
+      Pieces = new(result);
       OnPropertyChanged(nameof(Pieces));
     }
     catch (Exception)
@@ -53,10 +53,13 @@ public partial class MainPage
     }
   }
 
-  private static PuzzlePiece[] GeneratePuzzlePieces(byte[] image, Size size, int subdivide)
+  private PuzzleDrawable[] GeneratePuzzlePieces(MemoryStream stream, Size size, int subdivide)
   {
     var total = subdivide * subdivide;
-    var pieces = new PuzzlePiece[total];
+    var pieces = new PuzzleDrawable[total];
+    stream.Position = 0;
+    var image = stream.ToArray();
+    var platformImage = PlatformImage.FromStream(new MemoryStream(image));
 
     for (var i = 0; i < total; i++)
     {
@@ -64,7 +67,11 @@ public partial class MainPage
       var row = i / subdivide;
 
       var crop = Crop(image, row * size.Width, col * size.Height, size.Width, size.Height);
-      pieces[i] = new PuzzlePiece(i, crop);
+      var piece = new PuzzlePiece(i, crop)
+      {
+        Area = new Rect(row * size.Width, col * size.Height, size.Width, size.Height)
+      };
+      pieces[i] = new PuzzleDrawable(platformImage, piece);
     }
 
     return pieces;
@@ -88,7 +95,7 @@ public partial class MainPage
 
   private void OnDrag(object? sender, DragStartingEventArgs e)
   {
-    if (sender is Element { BindingContext: PuzzlePiece piece })
+    if (sender is Element { BindingContext: PuzzleDrawable { Piece: PuzzlePiece piece } })
     {
       Index = piece.CurrentIndex;
     }
@@ -98,20 +105,20 @@ public partial class MainPage
   {
     try
     {
-      if (sender is not Element { BindingContext: PuzzlePiece targetPiece }) return;
-      if (targetPiece.CurrentIndex == Index) return;
+      if (sender is not Element { BindingContext: PuzzleDrawable  targetPiece }) return;
+      if (targetPiece.Piece.CurrentIndex == Index) return;
 
-      var draggedPiece = Pieces.FirstOrDefault(p => p.CurrentIndex == Index);
+      var draggedPiece = Pieces.FirstOrDefault(p => p.Piece.CurrentIndex == Index);
       if (draggedPiece is null)
         return;
 
-      (draggedPiece.CurrentIndex, targetPiece.CurrentIndex) =
-        (targetPiece.CurrentIndex, draggedPiece.CurrentIndex);
+      (draggedPiece.Piece.CurrentIndex, targetPiece.Piece.CurrentIndex) =
+        (targetPiece.Piece.CurrentIndex, draggedPiece.Piece.CurrentIndex);
 
-      Pieces[draggedPiece.CurrentIndex] = draggedPiece;
-      Pieces[targetPiece.CurrentIndex] = targetPiece;
+      Pieces[draggedPiece.Piece.CurrentIndex] = draggedPiece;
+      Pieces[targetPiece.Piece.CurrentIndex] = targetPiece;
 
-      if (Pieces.All(p => p.CurrentIndex == p.OriginalIndex))
+      if (Pieces.All(p => p.Piece.CurrentIndex == p.Piece.OriginalIndex))
       {
         await DisplayAlert("🎉", "Puzzle solved!", "OK");
       }

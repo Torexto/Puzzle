@@ -17,16 +17,17 @@
             <Border StrokeThickness="0">
               <Border.GestureRecognizers>
                 <DropGestureRecognizer
-                  Drop="OnDrop"/>
+                  Drop="OnDrop" />
               </Border.GestureRecognizers>
-              <Image Source="{Binding Image}"
-                     x:DataType="helpers:PuzzlePiece"
-                     HeightRequest="50">
-                <Image.GestureRecognizers>
+              <GraphicsView Drawable="{Binding .}"
+                            x:DataType="helpers:PuzzleDrawable"
+                            WidthRequest="{Binding Width}"
+                            HeightRequest="{Binding Height}">
+                <GraphicsView.GestureRecognizers>
                   <DragGestureRecognizer CanDrag="True"
                                          DragStarting="OnDrag" />
-                </Image.GestureRecognizers>
-              </Image>
+                </GraphicsView.GestureRecognizers>
+              </GraphicsView>
             </Border>
           </DataTemplate>
         </CollectionView.ItemTemplate>

@@ -20,6 +20,8 @@ public class PuzzlePiece(int index, ImageSource image) : INotifyPropertyChanged
       OnPropertyChanged();
     }
   }
+  
+  public required Rect Area { get; set; }
 
   public event PropertyChangedEventHandler? PropertyChanged;
 
