@@ -2,36 +2,11 @@
 
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:helpers="clr-namespace:Puzzle.Helpers"
              x:Class="Puzzle.MainPage">
 
   <ScrollView>
     <VerticalStackLayout>
       <Button Clicked="PickImage" Text="Pick Image" />
-      <CollectionView x:Name="ImageContainer" ItemsSource="{Binding Pieces}">
-        <CollectionView.ItemsLayout>
-          <GridItemsLayout Orientation="Horizontal" />
-        </CollectionView.ItemsLayout>
-        <CollectionView.ItemTemplate>
-          <DataTemplate>
-            <Border StrokeThickness="0">
-              <Border.GestureRecognizers>
-                <DropGestureRecognizer
-                  Drop="OnDrop" />
-              </Border.GestureRecognizers>
-              <GraphicsView Drawable="{Binding .}"
-                            x:DataType="helpers:PuzzleDrawable"
-                            WidthRequest="{Binding Width}"
-                            HeightRequest="{Binding Height}">
-                <GraphicsView.GestureRecognizers>
-                  <DragGestureRecognizer CanDrag="True"
-                                         DragStarting="OnDrag" />
-                </GraphicsView.GestureRecognizers>
-              </GraphicsView>
-            </Border>
-          </DataTemplate>
-        </CollectionView.ItemTemplate>
-      </CollectionView>
     </VerticalStackLayout>
   </ScrollView>
 

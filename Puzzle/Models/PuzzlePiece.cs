@@ -1,14 +1,13 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Puzzle.Helpers;
+namespace Puzzle.Models;
 
-public class PuzzlePiece(int index, ImageSource image) : INotifyPropertyChanged
-
+public class PuzzlePiece(int index, Rect area) : INotifyPropertyChanged
 {
   private int _currentIndex = index;
-  public ImageSource Image { get; } = image;
   public int OriginalIndex { get; } = index;
+  public Rect Area { get; } = area;
 
   public int CurrentIndex
   {
@@ -20,11 +19,10 @@ public class PuzzlePiece(int index, ImageSource image) : INotifyPropertyChanged
       OnPropertyChanged();
     }
   }
-  
-  public required Rect Area { get; set; }
+
 
   public event PropertyChangedEventHandler? PropertyChanged;
 
-  protected void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
+  private void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

@@ -4,6 +4,38 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Puzzle.Views.Puzzle">
   <ContentPage.Content>
-    
+    <ScrollView>
+      <VerticalStackLayout>
+        <CollectionView x:Name="ImageContainer" ItemsSource="{Binding Pieces}">
+          <CollectionView.ItemsLayout>
+            <GridItemsLayout Orientation="Horizontal" Span="{Binding Division}" />
+          </CollectionView.ItemsLayout>
+          <CollectionView.ItemTemplate>
+            <DataTemplate>
+              <VerticalStackLayout>
+                <!-- <Label Text="{Binding Scale}"></Label> -->
+                <Border StrokeThickness="0">
+                  <Border.GestureRecognizers>
+                    <DropGestureRecognizer Drop="OnDrop" />
+                  </Border.GestureRecognizers>
+                  <GraphicsView
+                    Drawable="{Binding .}"
+                    WidthRequest="{Binding Width}"
+                    HeightRequest="{Binding Height}">
+
+                    <GraphicsView.GestureRecognizers>
+                      <DragGestureRecognizer
+                        CanDrag="True"
+                        DragStarting="OnDrag" />
+                    </GraphicsView.GestureRecognizers>
+
+                  </GraphicsView>
+                </Border>
+              </VerticalStackLayout>
+            </DataTemplate>
+          </CollectionView.ItemTemplate>
+        </CollectionView>
+      </VerticalStackLayout>
+    </ScrollView>
   </ContentPage.Content>
 </ContentPage>
