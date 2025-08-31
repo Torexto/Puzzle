@@ -22,8 +22,12 @@ public partial class Puzzle
 
     var display = DeviceDisplay.MainDisplayInfo;
     var screenWidth = display.Width / display.Density;
+    var screenHeight = display.Height / display.Density;
 
-    var scale = screenWidth / _image.Width;
+    var widthScale = screenWidth / _image.Width;
+    var heightScale = (screenHeight - 50) / _image.Height;
+
+    var scale = display.Orientation == DisplayOrientation.Portrait ? widthScale : heightScale;
 
     _viewModel = new PuzzleViewModel(_image, _division, scale);
     BindingContext = _viewModel;

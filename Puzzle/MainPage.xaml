@@ -5,9 +5,50 @@
              x:Class="Puzzle.MainPage">
 
   <ScrollView>
-    <VerticalStackLayout>
-      <Button Clicked="PickImage" Text="Pick Image" />
-    </VerticalStackLayout>
+    <Border>
+      <AbsoluteLayout>
+        <Border>
+          <VerticalStackLayout>
+            <CollectionView ItemsSource="{Binding Puzzles}">
+              <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" />
+              </CollectionView.ItemsLayout>
+              <CollectionView.ItemTemplate>
+                <DataTemplate>
+                  <Border>
+                    <VerticalStackLayout>
+                      <GraphicsView Drawable="{Binding .}" WidthRequest="50" HeightRequest="50">
+                        <GraphicsView.GestureRecognizers>
+                          <TapGestureRecognizer Tapped="OnTapped" />
+                        </GraphicsView.GestureRecognizers>
+                      </GraphicsView>
+                    </VerticalStackLayout>
+                  </Border>
+                </DataTemplate>
+              </CollectionView.ItemTemplate>
+            </CollectionView>
+          </VerticalStackLayout>
+        </Border>
+
+        <Button
+          AbsoluteLayout.LayoutFlags="PositionProportional"
+          AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
+          Clicked="PickImage"
+          CornerRadius="50"
+          Margin="24">
+
+          <Button.ImageSource>
+            <FontImageSource
+              Glyph="＋"
+              Size="28"
+              Color="White"
+              FontFamily="OpenSansSemibold" />
+          </Button.ImageSource>
+
+        </Button>
+
+      </AbsoluteLayout>
+    </Border>
   </ScrollView>
 
 </ContentPage>

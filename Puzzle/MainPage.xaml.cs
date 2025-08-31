@@ -1,17 +1,19 @@
-﻿using System.Collections.ObjectModel;
-using Microsoft.Maui.Graphics.Platform;
-using Puzzle.Helpers;
-using Puzzle.Models;
-using SkiaSharp;
-using Size = Puzzle.Helpers.Size;
+﻿using Microsoft.Maui.Graphics.Platform;
+using Puzzle.ViewModels;
+using IImage = Microsoft.Maui.Graphics.IImage;
 
 namespace Puzzle;
 
 public partial class MainPage
 {
+  private readonly MenuViewModel _viewModel;
+
   public MainPage()
   {
     InitializeComponent();
+
+    _viewModel = new MenuViewModel();
+    BindingContext = _viewModel;
   }
 
   private async void PickImage(object? sender, EventArgs e)
@@ -19,28 +21,17 @@ public partial class MainPage
     try
     {
       var options = new MediaPickerOptions() { Title = "Puzzle" };
-      var stream = await ImagePicker.PickImageAsync(options);
-      if (stream is null) return;
-      var image = PlatformImage.FromStream(stream);
+      var image = await PickImageAsync(options);
+      if (image is null) return;
 
-      // var imageSize = await ImagePicker.GetImageSizeAsync(stream);
-      //
-      // var puzzleSize = new Size(imageSize.Width / Subdivide, imageSize.Height / Subdivide);
-      //
-      // var result = GeneratePuzzlePieces(stream, puzzleSize, Subdivide);
-      //
-      // Random.Shared.Shuffle(result);
-      //
-      // for (var i = 0; i < result.Length; i++)
-      // {
-      //   result[i].Piece.CurrentIndex = i;
-      // }
-      //
-      // Pieces = new(result);
-      // OnPropertyChanged(nameof(Pieces));
+      var result = await DisplayPromptAsync("", "Divide for: (1-16)", "OK", "CANCEL", "", 2, Keyboard.Numeric, "5");
+      if (result is null) return;
 
+      if (!int.TryParse(result, out var division)) return;
 
-      await Navigation.PushAsync(new Views.Puzzle(image, 5));
+      _viewModel.Puzzles.Add(new ViewModels.Puzzle(image, division));
+
+      await Navigation.PushAsync(new Views.Puzzle(image, Math.Clamp(division, 1, 16)));
     }
     catch (Exception err)
     {
@@ -48,27 +39,28 @@ public partial class MainPage
     }
   }
 
-  private PuzzleDrawable[] GeneratePuzzlePieces(MemoryStream stream, Size size, int subdivide)
+  private static async Task<IImage?> PickImageAsync(MediaPickerOptions? options = null)
   {
-    var total = subdivide * subdivide;
-    var pieces = new PuzzleDrawable[total];
-    stream.Position = 0;
-    var image = stream.ToArray();
-    var platformImage = PlatformImage.FromStream(new MemoryStream(image));
-
-    for (var i = 0; i < total; i++)
+    try
     {
-      var col = i % subdivide;
-      var row = i / subdivide;
+      var file = await MediaPicker.PickPhotoAsync(options ?? new MediaPickerOptions());
+      if (file is null) return null;
 
-      var width = size.Width;
-      var height = size.Height;
+      await using var stream = await file.OpenReadAsync();
+      var memoryStream = new MemoryStream();
+      await stream.CopyToAsync(memoryStream);
+      memoryStream.Position = 0;
 
-      var area = new Rect(col * width, row * height, width, height);
-      var piece = new PuzzlePiece(i, area);
-      // pieces[i] = new PuzzleDrawable(platformImage, piece);
+      return PlatformImage.FromStream(memoryStream);
     }
+    catch (Exception)
+    {
+      return null;
+    }
+  }
 
-    return pieces;
+  private async void OnTapped(object? sender, TappedEventArgs e)
+  {
+    await DisplayAlert("t", "t", "t");
   }
 }

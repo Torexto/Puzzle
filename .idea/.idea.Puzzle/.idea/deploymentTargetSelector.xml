@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="Puzzle">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-08-31T15:38:04.196312708Z">
+        <DropdownSelection timestamp="2025-08-31T16:01:43.523444093Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=89OVMJRWWSJRZTLJ" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/home/torexto/.android/avd/Pixel_9_Edited.avd" />
             </handle>
           </Target>
         </DropdownSelection>
