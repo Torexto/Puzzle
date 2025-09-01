@@ -5,31 +5,30 @@
              x:Class="Puzzle.MainPage">
 
   <ScrollView>
-    <Border>
-      <AbsoluteLayout>
-        <Border>
-          <VerticalStackLayout>
-            <CollectionView ItemsSource="{Binding Puzzles}">
-              <CollectionView.ItemsLayout>
-                <LinearItemsLayout Orientation="Vertical" />
-              </CollectionView.ItemsLayout>
-              <CollectionView.ItemTemplate>
-                <DataTemplate>
-                  <Border>
-                    <VerticalStackLayout>
-                      <GraphicsView Drawable="{Binding .}" WidthRequest="50" HeightRequest="50">
-                        <GraphicsView.GestureRecognizers>
-                          <TapGestureRecognizer Tapped="OnTapped" />
-                        </GraphicsView.GestureRecognizers>
-                      </GraphicsView>
-                    </VerticalStackLayout>
-                  </Border>
-                </DataTemplate>
-              </CollectionView.ItemTemplate>
-            </CollectionView>
-          </VerticalStackLayout>
-        </Border>
+    <Grid>
+      <VerticalStackLayout HorizontalOptions="Fill">
+        <CollectionView ItemsSource="{Binding Puzzles}">
+          <CollectionView.ItemsLayout>
+            <LinearItemsLayout Orientation="Vertical" />
+          </CollectionView.ItemsLayout>
+          <CollectionView.ItemTemplate>
+            <DataTemplate>
+              <VerticalStackLayout>
+                <Label Text="{Binding Image}"></Label>
+                <Border Margin="10">
+                  <GraphicsView Drawable="{Binding Image}" HeightRequest="100" HorizontalOptions="Fill">
+                    <GraphicsView.GestureRecognizers>
+                      <TapGestureRecognizer Tapped="OnTapped" />
+                    </GraphicsView.GestureRecognizers>
+                  </GraphicsView>
+                </Border>
+              </VerticalStackLayout>
+            </DataTemplate>
+          </CollectionView.ItemTemplate>
+        </CollectionView>
+      </VerticalStackLayout>
 
+      <AbsoluteLayout>
         <Button
           AbsoluteLayout.LayoutFlags="PositionProportional"
           AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
@@ -44,11 +43,9 @@
               Color="White"
               FontFamily="OpenSansSemibold" />
           </Button.ImageSource>
-
         </Button>
-
       </AbsoluteLayout>
-    </Border>
+    </Grid>
   </ScrollView>
 
 </ContentPage>

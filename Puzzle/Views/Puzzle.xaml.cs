@@ -1,15 +1,14 @@
+using System.Collections.ObjectModel;
 using Puzzle.Models;
-using Puzzle.ViewModels;
 using IImage = Microsoft.Maui.Graphics.IImage;
 
 namespace Puzzle.Views;
 
 public partial class Puzzle
 {
-  private readonly IImage _image;
-  private readonly int _division;
-
-  private readonly PuzzleViewModel _viewModel;
+  public IImage Image { get; set; }
+  public ObservableCollection<PuzzlePiece> Pieces { get; } = [];
+  public int Division { get; set; }
 
   private int _index;
 
@@ -17,27 +16,17 @@ public partial class Puzzle
   {
     InitializeComponent();
 
-    _image = image;
-    _division = division;
+    Image = image;
+    Division = division;
 
-    var display = DeviceDisplay.MainDisplayInfo;
-    var screenWidth = display.Width / display.Density;
-    var screenHeight = display.Height / display.Density;
-
-    var widthScale = screenWidth / _image.Width;
-    var heightScale = (screenHeight - 50) / _image.Height;
-
-    var scale = display.Orientation == DisplayOrientation.Portrait ? widthScale : heightScale;
-
-    _viewModel = new PuzzleViewModel(_image, _division, scale);
-    BindingContext = _viewModel;
+    BindingContext = this;
   }
 
   private void OnDrag(object? sender, DragStartingEventArgs e)
   {
-    if (sender is Element { BindingContext: PuzzleDrawable piece })
+    if (sender is Element { BindingContext: PuzzlePiece piece })
     {
-      _index = piece.Piece.CurrentIndex;
+      _index = piece.CurrentIndex;
     }
   }
 
@@ -45,20 +34,20 @@ public partial class Puzzle
   {
     try
     {
-      if (sender is not Element { BindingContext: PuzzleDrawable targetPiece }) return;
-      if (targetPiece.Piece.CurrentIndex == _index) return;
+      if (sender is not Element { BindingContext: PuzzlePiece targetPiece }) return;
+      if (targetPiece.CurrentIndex == _index) return;
 
-      var draggedPiece = _viewModel.Pieces.FirstOrDefault(p => p.Piece.CurrentIndex == _index);
+      var draggedPiece = Pieces.FirstOrDefault(p => p.CurrentIndex == _index);
       if (draggedPiece is null)
         return;
 
-      (draggedPiece.Piece.CurrentIndex, targetPiece.Piece.CurrentIndex) =
-        (targetPiece.Piece.CurrentIndex, draggedPiece.Piece.CurrentIndex);
+      (draggedPiece.CurrentIndex, targetPiece.CurrentIndex) =
+        (targetPiece.CurrentIndex, draggedPiece.CurrentIndex);
 
-      _viewModel.Pieces[draggedPiece.Piece.CurrentIndex] = draggedPiece;
-      _viewModel.Pieces[targetPiece.Piece.CurrentIndex] = targetPiece;
+      Pieces[draggedPiece.CurrentIndex] = draggedPiece;
+      Pieces[targetPiece.CurrentIndex] = targetPiece;
 
-      if (_viewModel.Pieces.All(p => p.Piece.CurrentIndex == p.Piece.OriginalIndex))
+      if (Pieces.All(p => p.CurrentIndex == p.OriginalIndex))
       {
         await DisplayAlert("🎉", "Puzzle solved!", "OK");
       }

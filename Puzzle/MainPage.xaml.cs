@@ -29,7 +29,7 @@ public partial class MainPage
 
       if (!int.TryParse(result, out var division)) return;
 
-      _viewModel.Puzzles.Add(new ViewModels.Puzzle(image, division));
+      _viewModel.Puzzles.Add(new Models.Puzzle(image, division));
 
       await Navigation.PushAsync(new Views.Puzzle(image, Math.Clamp(division, 1, 16)));
     }

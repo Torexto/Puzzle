@@ -1,9 +1,11 @@
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using IImage = Microsoft.Maui.Graphics.IImage;
 
 namespace Puzzle.Models;
 
-public class PuzzlePiece(int index, Rect area) : INotifyPropertyChanged
+public class PuzzlePiece(IImage originalImage, int index, Rect area, double scale) : IDrawable, INotifyPropertyChanged
 {
   private int _currentIndex = index;
   public int OriginalIndex { get; } = index;
@@ -18,6 +20,23 @@ public class PuzzlePiece(int index, Rect area) : INotifyPropertyChanged
       _currentIndex = value;
       OnPropertyChanged();
     }
+  }
+
+  public double Width => Area.Width * scale;
+  public double Height => Area.Height * scale;
+  public double Scale => scale;
+
+  public void Draw(ICanvas canvas, RectF dirtyRect)
+  {
+    canvas.SaveState();
+    canvas.DrawImage(
+      originalImage,
+      (float)(-Area.X * scale),
+      (float)(-Area.Y * scale),
+      (float)(originalImage.Width * scale),
+      (float)(originalImage.Height * scale)
+    );
+    canvas.RestoreState();
   }
 
 
