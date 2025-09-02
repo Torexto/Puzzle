@@ -13,16 +13,13 @@
           </CollectionView.ItemsLayout>
           <CollectionView.ItemTemplate>
             <DataTemplate>
-              <VerticalStackLayout>
-                <Label Text="{Binding Image}"></Label>
-                <Border Margin="10">
-                  <GraphicsView Drawable="{Binding Image}" HeightRequest="100" HorizontalOptions="Fill">
-                    <GraphicsView.GestureRecognizers>
-                      <TapGestureRecognizer Tapped="OnTapped" />
-                    </GraphicsView.GestureRecognizers>
-                  </GraphicsView>
-                </Border>
-              </VerticalStackLayout>
+              <Border Margin="10">
+                <GraphicsView Drawable="{Binding Image}" HeightRequest="100" HorizontalOptions="Fill">
+                  <GraphicsView.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnTapped" />
+                  </GraphicsView.GestureRecognizers>
+                </GraphicsView>
+              </Border>
             </DataTemplate>
           </CollectionView.ItemTemplate>
         </CollectionView>

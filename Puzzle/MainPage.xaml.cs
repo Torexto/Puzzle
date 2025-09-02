@@ -29,9 +29,11 @@ public partial class MainPage
 
       if (!int.TryParse(result, out var division)) return;
 
-      _viewModel.Puzzles.Add(new Models.Puzzle(image, division));
+      var puzzle = new Models.Puzzle(image, Math.Clamp(division, 1, 16));
 
-      await Navigation.PushAsync(new Views.Puzzle(image, Math.Clamp(division, 1, 16)));
+      _viewModel.Puzzles.Add(puzzle);
+
+      await Navigation.PushAsync(new Views.PuzzleView(puzzle));
     }
     catch (Exception err)
     {
@@ -61,6 +63,8 @@ public partial class MainPage
 
   private async void OnTapped(object? sender, TappedEventArgs e)
   {
-    await DisplayAlert("t", "t", "t");
+    if (sender is not Element {BindingContext: Models.Puzzle puzzle}) return;
+
+    await Navigation.PushAsync(new Views.PuzzleView(puzzle));
   }
 }

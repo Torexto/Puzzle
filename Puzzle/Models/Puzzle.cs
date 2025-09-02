@@ -63,7 +63,7 @@ public class Puzzle
   }
 
   [JsonIgnore] //
-  private IImage Image { get; }
+  public IImage Image { get; }
 
   [JsonPropertyName("imageData")] //
   public byte[] ImageData { get; set; }

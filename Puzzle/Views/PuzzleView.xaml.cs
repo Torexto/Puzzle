@@ -4,20 +4,30 @@ using IImage = Microsoft.Maui.Graphics.IImage;
 
 namespace Puzzle.Views;
 
-public partial class Puzzle
+public partial class PuzzleView
 {
+  private readonly Models.Puzzle _puzzle;
+
   public IImage Image { get; set; }
-  public ObservableCollection<PuzzlePiece> Pieces { get; } = [];
+  public ObservableCollection<PuzzlePiece> Pieces { get; }
   public int Division { get; set; }
 
   private int _index;
 
-  public Puzzle(IImage image, int division)
+  public PuzzleView(Models.Puzzle puzzle)
   {
     InitializeComponent();
 
-    Image = image;
-    Division = division;
+    _puzzle = puzzle;
+
+    Image = puzzle.Image;
+    Division = puzzle.Division;
+    Pieces = new ObservableCollection<PuzzlePiece>(puzzle.Pieces);
+
+    Pieces.CollectionChanged += (s, e) =>
+    {
+      _puzzle.Pieces = Pieces.ToArray();
+    };
 
     BindingContext = this;
   }
