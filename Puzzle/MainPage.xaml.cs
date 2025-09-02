@@ -1,19 +1,18 @@
-﻿using Microsoft.Maui.Graphics.Platform;
-using Puzzle.ViewModels;
+﻿using System.Collections.ObjectModel;
+using Microsoft.Maui.Graphics.Platform;
 using IImage = Microsoft.Maui.Graphics.IImage;
 
 namespace Puzzle;
 
 public partial class MainPage
 {
-  private readonly MenuViewModel _viewModel;
+  public ObservableCollection<Models.Puzzle> Puzzles { get; } = [];
 
   public MainPage()
   {
     InitializeComponent();
 
-    _viewModel = new MenuViewModel();
-    BindingContext = _viewModel;
+    BindingContext = this;
   }
 
   private async void PickImage(object? sender, EventArgs e)
@@ -31,7 +30,7 @@ public partial class MainPage
 
       var puzzle = new Models.Puzzle(image, Math.Clamp(division, 1, 16));
 
-      _viewModel.Puzzles.Add(puzzle);
+      Puzzles.Add(puzzle);
 
       await Navigation.PushAsync(new Views.PuzzleView(puzzle));
     }
